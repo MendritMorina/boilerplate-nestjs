@@ -19,6 +19,9 @@ export class User extends BaseEntity {
   @Column({ type: 'boolean', default: true })
   active: boolean;
 
+  @Column()
+  refreshToken?: string;
+
   @Column({ type: 'boolean', default: false })
   isDeleted: boolean;
 }
