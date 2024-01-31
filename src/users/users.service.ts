@@ -25,7 +25,6 @@ export class UsersService {
     }
     signupDto.password = await hash(signupDto.password, 10);
     let user = await this.usersRepository.create(signupDto);
-    user.refreshToken = 'refresh_token_string';
     user = await this.usersRepository.save(user);
     delete user.password;
     return user;
@@ -100,6 +99,22 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     return await this.usersRepository.find({
+      select: [
+        'id',
+        'username',
+        'email',
+        'createdAt',
+        'updatedAt',
+        'active',
+        'isDeleted',
+        'role',
+      ],
+    });
+  }
+
+  async findOne(id: string): Promise<User> {
+    return await this.usersRepository.findOne({
+      where: { id: id },
       select: [
         'id',
         'username',
