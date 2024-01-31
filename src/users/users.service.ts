@@ -1,12 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { hash, compareSync } from 'bcrypt';
 import { SignUpDto } from './dto/user-signup.dto';
 import { SignInDto } from './dto/user-signin.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { FilterUserDto } from './dto/filter-user.dto';
+import { async } from 'rxjs';
 
 @Injectable()
 export class UsersService {
@@ -97,8 +99,19 @@ export class UsersService {
     return await this.usersRepository.findOne({ where: { email: email } });
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.usersRepository.find({
+  async findAll(query: FilterUserDto): Promise<any> {
+    const itemsPerPage = Number(query.itemsPerPage) || 10;
+    const page = Number(query.page) || 1;
+    const skip = (page - 1) * itemsPerPage;
+    const keyword = query.search || '';
+    const [res, total] = await this.usersRepository.findAndCount({
+      where: [
+        { username: Like('%' + keyword + '%') },
+        { email: Like('%' + keyword + '%') },
+      ],
+      // order: { created_at: "DESC" },
+      take: itemsPerPage,
+      skip: skip,
       select: [
         'id',
         'username',
@@ -110,6 +123,20 @@ export class UsersService {
         'role',
       ],
     });
+    const lastPage = Math.ceil(total / itemsPerPage);
+    const nextPage = page + 1 > lastPage ? null : page + 1;
+    const prevPage = page - 1 < 1 ? null : page - 1;
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    return {
+      data: res,
+      total,
+      currenPage: page,
+      nextPage,
+      prevPage,
+      lastPage,
+    };
   }
 
   async findOne(id: string): Promise<User> {
