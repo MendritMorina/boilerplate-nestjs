@@ -1,6 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { UserRoles } from '../../enum/user-roles.enum';
 import { BaseEntity } from '../../base.entity';
+import { Post } from '../../post/entities/post.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -24,4 +25,7 @@ export class User extends BaseEntity {
 
   @Column({ type: 'boolean', default: false })
   isDeleted: boolean;
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[];
 }

@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ImagesModule } from './images/images.module';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     ConfigModule.forRoot(),
     UsersModule,
     ImagesModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [AppService],

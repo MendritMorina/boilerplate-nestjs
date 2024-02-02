@@ -25,14 +25,18 @@ export class ImagesService {
   async uploadImage(file: Express.Multer.File): Promise<Image> {
     const newImage = new Image();
     Object.assign(newImage, {
-      url: `${this.baseUrl}public/${file.filename}`,
-      name: file.originalname,
-      mimeType: file.mimetype,
-      size: file.size,
-      filename: file.filename,
+      url: `${this.baseUrl}public/${file?.filename}`,
+      name: file?.originalname,
+      mimeType: file?.mimetype,
+      size: file?.size,
+      filename: file?.filename,
     });
 
-    return this.imageRepository.save(newImage);
+    if (newImage.filename == null) {
+      return null;
+    } else {
+      return this.imageRepository.save(newImage);
+    }
   }
 
   async getImages(): Promise<Image[]> {

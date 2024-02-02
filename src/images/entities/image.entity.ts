@@ -1,23 +1,23 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from '../../base.entity';
 
-@Entity('image')
+@Entity('images')
 export class Image extends BaseEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'Id' })
   id?: string;
 
-  @Column()
+  @Column({ nullable: true })
   url: string;
 
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   mimeType: string;
 
-  @Column()
+  @Column({ nullable: true })
   filename: string;
 
-  @Column()
+  @Column({ nullable: true })
   size: number;
 }
